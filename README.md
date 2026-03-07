@@ -1,1 +1,348 @@
-# GobiBirthday
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gobika Birthday Surprise</title>
+<style>
+  /* Reset */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: pan-y;
+  }
+
+  #container {
+    display: flex;
+    width: 700vw; /* 7 pages */
+    transition: transform 0.5s ease;
+    height: 100vh;
+  }
+
+  .page {
+    flex: 0 0 100vw;
+    height: 100vh;
+    padding: 30px 20px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    background: transparent;
+    z-index: 10;
+  }
+
+  /* Remove overlay completely */
+  .page::before { display: none; }
+
+  h1, h2, h3 { margin-bottom: 15px; font-weight: 700; user-select: none; }
+  h1 { font-size: 3rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.5rem; }
+
+  button {
+    padding: 14px 30px;
+    border: none;
+    border-radius: 30px;
+    background: #ff4d88;
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-top: 25px;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgba(255, 77, 136, 0.7);
+    transition: background-color 0.3s ease;
+    user-select: none;
+    outline-offset: 4px;
+  }
+  button:hover, button:focus { background: #ff1f6f; outline: none; }
+
+  .heart {
+    position: fixed;
+    color: #ff4d88;
+    font-size: 22px;
+    animation: float 6s linear infinite;
+    z-index: 9999;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(100vh) scale(0.7); opacity: 1; }
+    100% { transform: translateY(-15vh) scale(1.1); opacity: 0; }
+  }
+
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* Slideshow container */
+  .slideshow-container {
+    width: 280px;
+    height: 380px;
+    border: 4px solid white;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 20px auto;
+  }
+  .slideshow-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    user-select: none;
+  }
+
+  /* Love Story Timeline */
+  .timeline {
+    max-width: 600px;
+    text-align: left;
+    margin: 20px auto;
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
+  .timeline-item {
+    border-left: 4px solid #ff4d88;
+    padding-left: 15px;
+    margin: 15px 0;
+    user-select: none;
+  }
+
+  /* Reasons list */
+  #reasons {
+    max-width: 600px;
+    margin-top: 20px;
+    text-align: left;
+    font-size: 1.1rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+    user-select: text;
+  }
+  #reasons p { margin: 5px 0; }
+
+  /* Cake emoji */
+  .cake { font-size: 140px; cursor: pointer; user-select: none; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.4rem; }
+    h3 { font-size: 1.1rem; }
+    button { font-size: 1rem; padding: 12px 24px; }
+    .cake { font-size: 100px; }
+    .slideshow-container { width: 200px; height: 270px; }
+    .timeline { max-width: 90vw; font-size: 1rem; }
+    #reasons { max-width: 90vw; max-height: 200px; font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Audio -->
+<audio autoplay loop>
+  <source src="song.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- Fireworks Canvas -->
+<canvas id="galaxy"></canvas>
+
+<!-- Main container -->
+<div id="container">
+
+  <!-- Page 1 -->
+  <div class="page" id="p1">
+    <h1>A Love Story by Surya</h1>
+    <h2>Starring Gobika ❤️</h2>
+    <button onclick="goToPage(1)">Start</button>
+  </div>
+
+  <!-- Page 2 -->
+  <div class="page" id="p2">
+    <h1>Gobika ❤️ Surya</h1>
+    <button onclick="goToPage(2)">Our Memories</button>
+  </div>
+
+  <!-- Page 3 -->
+  <div class="page" id="p3">
+    <h2>Our Beautiful Memories</h2>
+    <div class="slideshow-container">
+      <img id="slide" src="https://via.placeholder.com/280x380?text=Photo1" alt="Memory Photo" />
+    </div>
+    <button onclick="goToPage(3)">Next</button>
+  </div>
+
+  <!-- Page 4 -->
+  <div class="page" id="p4">
+    <h2>Cut the Birthday Cake 🎂</h2>
+    <div class="cake" onclick="fireworks()">🎂</div>
+    <button onclick="goToPage(4)">Love Story Timeline</button>
+  </div>
+
+  <!-- Page 5 -->
+  <div class="page" id="p5">
+    <h2>Our Love Story</h2>
+    <div class="timeline">
+      <div class="timeline-item">✨ The day we met</div>
+      <div class="timeline-item">💞 Falling in love</div>
+      <div class="timeline-item">💍 Becoming husband and wife</div>
+      <div class="timeline-item">🌹 Forever together</div>
+    </div>
+    <button onclick="goToPage(5)">Final Proposal</button>
+  </div>
+
+  <!-- Page 6 -->
+  <div class="page" id="p6">
+    <h1>Gobika... Will you stay with me forever?</h1>
+    <div>
+      <button onclick="proposalYes()">YES ❤️</button>
+      <button onclick="proposalNo()">NO 💔</button>
+    </div>
+  </div>
+
+  <!-- Page 7 -->
+  <div class="page" id="p7">
+    <h1>Love you thangamayileyhhh ❤️</h1>
+    <h3>Forever yours,<br>Surya</h3>
+    <div id="reasons"></div>
+  </div>
+
+</div>
+
+<script>
+  // Page navigation
+  let currentPage = 0;
+  const container = document.getElementById('container');
+  const totalPages = document.querySelectorAll('.page').length;
+
+  function updatePages() {
+    container.style.transform = `translateX(-${currentPage * 100}vw)`;
+  }
+  function goToPage(n) {
+    if(n >= 0 && n < totalPages) {
+      currentPage = n;
+      updatePages();
+    }
+  }
+
+  // Swipe support
+  let startX=0, endX=0;
+  document.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    endX = e.changedTouches[0].clientX;
+    if(endX < startX-50){ currentPage=Math.min(currentPage+1,totalPages-1); updatePages(); }
+    else if(endX > startX+50){ currentPage=Math.max(currentPage-1,0); updatePages(); }
+  });
+  document.addEventListener('mousedown', e => { startX = e.clientX; });
+  document.addEventListener('mouseup', e => {
+    endX = e.clientX;
+    if(endX < startX-50){ currentPage=Math.min(currentPage+1,totalPages-1); updatePages(); }
+    else if(endX > startX+50){ currentPage=Math.max(currentPage-1,0); updatePages(); }
+  });
+
+  // Floating hearts
+  setInterval(() => {
+    const heart = document.createElement('div');
+    heart.className='heart';
+    heart.innerHTML='❤️';
+    heart.style.left=Math.random()*100+'vw';
+    heart.style.animationDuration=(4+Math.random()*3)+'s';
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),7000);
+  },400);
+
+  // Photo slideshow
+  const photos=[
+    'https://via.placeholder.com/280x380?text=Photo1',
+    'https://via.placeholder.com/280x380?text=Photo2',
+    'https://via.placeholder.com/280x380?text=Photo3',
+    'https://via.placeholder.com/280x380?text=Photo4'
+  ];
+  let slideIndex=0;
+  setInterval(()=>{
+    slideIndex=(slideIndex+1)%photos.length;
+    const slide=document.getElementById('slide');
+    if(slide) slide.src=photos[slideIndex];
+  },3000);
+
+  // Fireworks canvas
+  const canvas=document.getElementById('galaxy');
+  const ctx=canvas.getContext('2d');
+  function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+  window.addEventListener('resize',resizeCanvas);
+  resizeCanvas();
+
+  let particles=[];
+  function firework(){
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height/2;
+    for(let i=0;i<120;i++){
+      particles.push({
+        x,y,
+        vx:(Math.random()-0.5)*8,
+        vy:(Math.random()-0.5)*8,
+        life:100,
+        color:`hsl(${Math.random()*360},100%,60%)`
+      });
+    }
+  }
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height); // <-- clear canvas instead of dark overlay
+    particles.forEach((p,idx)=>{
+      p.x+=p.vx;
+      p.y+=p.vy;
+      p.life--;
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3,0,Math.PI*2);
+      ctx.fill();
+      if(p.life<=0) particles.splice(idx,1);
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  function fireworks(){ for(let i=0;i<10;i++){ setTimeout(firework,i*300); } }
+
+  // Proposal logic
+  function proposalYes(){ goToPage(6); generateReasons(); fireworks(); }
+  function proposalNo(){ alert("Oh no! You must click YES ❤️ to see the surprise!"); }
+
+  function generateReasons(){
+    const box=document.getElementById('reasons'); box.innerHTML='';
+    const msgs=[
+      'your smile brightens my every day ❤️',
+      'I love how you laugh at everything I say 😍',
+      'you make life magical ✨',
+      'every moment with you is my favorite 🌹',
+      'your love completes me ❤️',
+      'your eyes are my stars 💫',
+      'I adore the way you care 💖',
+      'every hug from you warms my heart 🥰',
+      'your voice is music to my soul 🎵',
+      'being with you is my happiest place 🏡'
+    ];
+    for(let i=0;i<50;i++){
+      const p=document.createElement('p');
+      p.textContent=`${i+1}. Gobika, ${msgs[i%msgs.length]}`;
+      box.appendChild(p);
+    }
+  }
+</script>
+</body>
+</html>

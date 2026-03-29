@@ -94,8 +94,8 @@
 
   /* Slideshow container */
   .slideshow-container {
-    width: 280px;
-    height: 380px;
+    width: 330px;
+    height: 480px;
     border: 4px solid white;
     border-radius: 20px;
     overflow: hidden;
@@ -108,6 +108,7 @@
     border-radius: 20px;
     user-select: none;
   }
+  
 
   /* Love Story Timeline */
   .timeline {
@@ -151,14 +152,71 @@
     .timeline { max-width: 90vw; font-size: 1rem; }
     #reasons { max-width: 90vw; max-height: 200px; font-size: 1rem; }
   }
+
+  /* ===== VIDEO OVERLAY ===== */
+#videoOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+ background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: 1s;
+}
+#videoOverlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* #videoOverlay video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: 0 0 80px #ff4d88;
+} */
+
+#videoOverlay video {
+  width: 80%;
+  max-width: 800px;
+  height: auto;
+  max-height: 80%;
+  border-radius: 20px;
+  box-shadow: 0 0 40px #ff4d88;
+}
+
+/* BLUR EFFECT */
+.blur-bg {
+  filter: blur(10px) brightness(0.5);
+}
+
 </style>
 </head>
 <body>
 
 <!-- Audio -->
 <audio autoplay loop>
-  <source src="song.mp3" type="audio/mpeg" />
+  <source src="epdivanthayo.mpeg" type="audio/mpeg" />
 </audio>
+
+<!-- VIDEO OVERLAY -->
+<div id="videoOverlay">
+  <video id="surpriseVideo" muted playsinline preload="none">
+    <source src="MyLove.mp4" type="video/mp4">
+  </video>
+   <!-- CLOSE BUTTON -->
+  <button onclick="closeVideo()" style="
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:18px;
+    padding:10px 20px;
+  ">✖ Close</button>
+</div>
 
 <!-- Fireworks Canvas -->
 <canvas id="galaxy"></canvas>
@@ -170,7 +228,7 @@
   <div class="page" id="p1">
     <h1>A Love Story by Surya</h1>
     <h2>Starring Gobika ❤️</h2>
-    <button onclick="goToPage(1)">Start</button>
+    <button onclick="goToPage(1); playMusic();">Start</button>
   </div>
 
   <!-- Page 2 -->
@@ -209,7 +267,7 @@
 
   <!-- Page 6 -->
   <div class="page" id="p6">
-    <h1>Gobika... Will you stay with me forever?</h1>
+    <h1>Ammuh... Will you stay with me forever?</h1>
     <div>
       <button onclick="proposalYes()">YES ❤️</button>
       <button onclick="proposalNo()">NO 💔</button>
@@ -218,14 +276,65 @@
 
   <!-- Page 7 -->
   <div class="page" id="p7">
-    <h1>Love you thangamayileyhhh ❤️</h1>
-    <h3>Forever yours,<br>Surya</h3>
-    <div id="reasons"></div>
-  </div>
+  <h1>Love you thangamayileyhhh ❤️</h1>
+  <h3>Forever yours,<br>Surya</h3>
+
+  <div id="reasons"></div>
+
+  <!-- ✅ ADD THIS BUTTON -->
+  <button onclick="playJourneyVideo()">Click to view our journey mmuh..</button>
+  <button onclick="goToPage(0)">⬅ Back</button>
+</div>
 
 </div>
 
 <script>
+
+  /* AUDIO FIX (without touching your existing audio tag) */
+function playMusic() {
+  const audio = document.querySelector("audio");
+  if (audio) {
+    audio.play().catch(() => {});
+  }
+}
+
+
+
+function playJourneyVideo(){
+  const overlay = document.getElementById("videoOverlay");
+  const video = document.getElementById("surpriseVideo");
+
+  // keep background music playing ✅ (no change)
+
+  // blur background
+  document.getElementById("container").classList.add("blur-bg");
+
+  // show video
+  overlay.classList.add("active");
+
+  // 🔇 MUTE video
+  video.muted = true;
+  video.volume = 0;
+
+  video.play().catch(()=>{});
+}
+
+window.onload = () => {
+  const video = document.getElementById("surpriseVideo");
+  video.pause();
+  video.currentTime = 0;
+};
+function closeVideo(){
+  const overlay = document.getElementById("videoOverlay");
+  const video = document.getElementById("surpriseVideo");
+
+  video.pause();
+  video.currentTime = 0;
+
+  overlay.classList.remove("active");
+  document.getElementById("container").classList.remove("blur-bg");
+}
+
   // Page navigation
   let currentPage = 0;
   const container = document.getElementById('container');
@@ -269,17 +378,22 @@
 
   // Photo slideshow
   const photos=[
-    'https://via.placeholder.com/280x380?text=Photo1',
-    'https://via.placeholder.com/280x380?text=Photo2',
-    'https://via.placeholder.com/280x380?text=Photo3',
-    'https://via.placeholder.com/280x380?text=Photo4'
+    'photo1.JPG',
+    'photo2.JPG',
+    'togatherOoty0.jpeg',
+    'togatherOoty00.jpeg',
+    'togatherOoty1.jpeg',
+    'togatherOoty2.jpeg',
+    'togatherOoty3.jpeg',
+    'valentines.jpeg',
+    'gobzz1.jpg',
   ];
   let slideIndex=0;
   setInterval(()=>{
     slideIndex=(slideIndex+1)%photos.length;
     const slide=document.getElementById('slide');
     if(slide) slide.src=photos[slideIndex];
-  },3000);
+  },4000);
 
   // Fireworks canvas
   const canvas=document.getElementById('galaxy');
@@ -321,8 +435,16 @@
   function fireworks(){ for(let i=0;i<10;i++){ setTimeout(firework,i*300); } }
 
   // Proposal logic
-  function proposalYes(){ goToPage(6); generateReasons(); fireworks(); }
-  function proposalNo(){ alert("Oh no! You must click YES ❤️ to see the surprise!"); }
+  //function proposalYes(){ goToPage(6); generateReasons(); fireworks(); }
+  function proposalYes(){ 
+  goToPage(6); 
+  generateReasons(); 
+  fireworks();
+
+  // 🎬 VIDEO START
+
+}
+  function proposalNo(){ alert("Oh no! Pondati🫡 You must click YES ❤️ to see the surprise!"); }
 
   function generateReasons(){
     const box=document.getElementById('reasons'); box.innerHTML='';
@@ -340,7 +462,7 @@
     ];
     for(let i=0;i<50;i++){
       const p=document.createElement('p');
-      p.textContent=`${i+1}. Gobika, ${msgs[i%msgs.length]}`;
+      p.textContent=`${i+1}. Gobzz, ${msgs[i%msgs.length]}`;
       box.appendChild(p);
     }
   }
